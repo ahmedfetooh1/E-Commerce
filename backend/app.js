@@ -2,6 +2,7 @@ const exress = require('express');
 const app = exress();
 const bodyParser = require("body-parser")
 const morgan = require('morgan')
+const mongoose = require('mongoose')
 
 
 // middleWare
@@ -23,6 +24,24 @@ app.post(`${api}/products`,(req,res)=>{
     res.send(product);
 })
 
-app.listen(3000,()=>{
-    console.log("server is running http://localhost:3000");
+
+
+
+
+// connect to mongo atlas database 
+const dbURI = process.env.MONGO_URI;
+mongoose.connect(dbURI)
+    .then(() => {
+        console.log("Connected to MongoDB successfully!");
+    })
+    .catch((err) => {
+        console.error("Connection error:", err.message);
+    });
+
+
+
+// running backend server
+const PORT = process.env.PORT
+app.listen(PORT,()=>{
+    console.log(`server is running on http://localhost:${PORT}`);
 })
