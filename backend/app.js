@@ -5,30 +5,36 @@ const morgan = require('morgan')
 const mongoose = require('mongoose')
 
 
+require('dotenv/config')
+
+
 // middleWare
 app.use(bodyParser.json());
-app.use(morgan('tiny'))
+app.use(morgan('tiny'));
 
 
-require('dotenv/config')
+// Routes 
+const categoriesRoutes = require('./routes/categories.js')
+const productsRouter = require('./routes/products.js')
+const usersRoutes = require('./routes/users.js')
+const ordersRoutes = require('./routes/orders.js')
 
 
 const api = process.env.API_URL
 
-app.post(`${api}/products`,(req,res)=>{
-    const product = {
-        id : 1, 
-        name : 'hair dresser',
-        image : 'some url'
-    }
-    res.send(product);
-})
+// Routes
+app.use(`${api}/categories`,categoriesRoutes)
+app.use(`${api}/products`,productsRouter)
+app.use(`${api}/users`,usersRoutes)
+app.use(`${api}/orders`,ordersRoutes)
 
 
 
 
 
-// connect to mongo atlas database 
+
+
+// Database connection
 const dbURI = process.env.MONGO_URI;
 mongoose.connect(dbURI)
     .then(() => {
@@ -40,7 +46,7 @@ mongoose.connect(dbURI)
 
 
 
-// running backend server
+// Server
 const PORT = process.env.PORT
 app.listen(PORT,()=>{
     console.log(`server is running on http://localhost:${PORT}`);
