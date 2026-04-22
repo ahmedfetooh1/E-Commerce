@@ -3,9 +3,12 @@ const app = exress();
 const bodyParser = require("body-parser")
 const morgan = require('morgan')
 const mongoose = require('mongoose')
+const cors = require('cors')
 
 
 require('dotenv/config')
+
+app.use(cors());
 
 
 // middleWare
