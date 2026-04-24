@@ -59,7 +59,7 @@ router.put('/:id',async(req,res)=>{
     if(!mongoose.isValidObjectId(req.params.id)){
         return res.status(400).send('Invalild Product ID')
     }
-    
+
     const category = await Category.findById(req.body.category);
     if(!category) return res.status(400).send('Invalild Category')
 
@@ -94,6 +94,31 @@ router.delete('/:id',(req,res)=>{
         }
     }).catch(err=>{
         return res.status(400).json({success:false, error : err})
+    })
+})
+
+router.get('/get/count', async (req,res)=>{
+    const productsCount = await Product.countDocuments()
+
+    if(!productsCount){
+        res.status(500).json({success:false})
+    }
+    res.send({
+        productsCount : productsCount
+    })
+})
+
+
+router.get('/get/featured/:count', async (req,res)=>{
+    
+    const count = req.params.count ? req.params.count : 0
+    const products = await Product.find({isFeatured:true}).limit(+count) ;
+
+    if(!products){
+        res.status(500).json({success:false})
+    }
+    res.send({
+        products : products
     })
 })
 
