@@ -8,7 +8,11 @@ const mongoose = require('mongoose')
 
 
 router.get(`/`,async (req , res) => {
-    const productList = await Product.find().populate('category');
+    let filter = {};
+    if(req.query.categories){
+        filter ={category: req.query.categories.split(',')}
+    }
+    const productList = await Product.find(filter).populate('category');
 
     if(!productList){
         res.status(500).json({success:false})
@@ -110,7 +114,7 @@ router.get('/get/count', async (req,res)=>{
 
 
 router.get('/get/featured/:count', async (req,res)=>{
-    
+
     const count = req.params.count ? req.params.count : 0
     const products = await Product.find({isFeatured:true}).limit(+count) ;
 
