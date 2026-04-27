@@ -4,7 +4,7 @@ const bodyParser = require("body-parser")
 const morgan = require('morgan')
 const mongoose = require('mongoose')
 const cors = require('cors')
-
+const authJwt = require('./helpers/jwt.js')
 
 require('dotenv/config')
 
@@ -14,7 +14,7 @@ app.use(cors());
 // middleWare
 app.use(bodyParser.json());
 app.use(morgan('tiny'));
-
+app.use('authjwt')
 
 // Routes 
 const categoriesRoutes = require('./routes/categories.js')
