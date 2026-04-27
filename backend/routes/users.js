@@ -76,30 +76,23 @@ router.put('/:id',async (req, res)=> {
     res.send(user);
 })
 
-router.post('/login', async (req,res) => {
-    const user = await User.findOne({email: req.body.email})
-    const secret = process.env.secret;
-    if(!user) {
-        return res.status(400).send('The user not found');
-    }
+router.post('/login', async (req, res) => {
+    const user = await User.findOne({ email: req.body.email });
+    const secret = process.env.SECRET;
 
-    if(user && bcrypt.compareSync(req.body.password, user.passwordHash)) {
+    if (!user) return res.status(400).send('The user not found');
+
+    if (req.body.password && bcrypt.compareSync(req.body.password, user.passwordHash)) {
         const token = jwt.sign(
-            {
-                userId: user.id,
-                isAdmin: user.isAdmin
-            },
+            { userId: user.id, isAdmin: user.isAdmin },
             secret,
-            {expiresIn : '1d'}
-        )
-    
-        res.status(200).send({user: user.email , token: token}) 
+            { expiresIn: '1d' }
+        );
+        res.status(200).send({ user: user.email, token: token });
     } else {
         res.status(400).send('password is wrong!');
     }
-
-    
-})
+});
 
 
 router.post('/register', async (req,res)=>{
@@ -124,28 +117,28 @@ router.post('/register', async (req,res)=>{
 })
 
 
-router.delete('/:id', (req, res)=>{
-    User.findByIdAndRemove(req.params.id).then(user =>{
-        if(user) {
-            return res.status(200).json({success: true, message: 'the user is deleted!'})
+router.delete('/:id', async (req, res) => {
+    try {
+        const user = await User.findByIdAndDelete(req.params.id);
+        if (user) {
+            return res.status(200).json({ success: true, message: 'the user is deleted!' });
         } else {
-            return res.status(404).json({success: false , message: "user not found!"})
+            return res.status(404).json({ success: false, message: "user not found!" });
         }
-    }).catch(err=>{
-        return res.status(500).json({success: false, error: err}) 
-    })
-})
+    } catch (err) {
+        return res.status(500).json({ success: false, error: err });
+    }
+});
 
-router.get(`/get/count`, async (req, res) =>{
-    const userCount = await User.countDocuments((count) => count)
 
-    if(!userCount) {
-        res.status(500).json({success: false})
-    } 
-    res.send({
-        userCount: userCount
-    });
-})
 
+router.get(`/get/count`, async (req, res) => {
+    const userCount = await User.countDocuments();
+
+    if (userCount === undefined) {
+        return res.status(500).json({ success: false });
+    }
+    res.send({ userCount: userCount });
+});
 
 module.exports =router;
