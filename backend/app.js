@@ -1,20 +1,23 @@
-const exress = require('express');
-const app = exress();
-const bodyParser = require("body-parser")
-const morgan = require('morgan')
-const mongoose = require('mongoose')
-const cors = require('cors')
-const authJwt = require('./helpers/jwt.js')
+const express = require('express');
+const app = express();
+const morgan = require('morgan');
+const mongoose = require('mongoose');
+const cors = require('cors');
+require('dotenv/config');
+const authJwt = require('./helpers/jwt');
+const errorHandler = require('./helpers/error-handler');
 
-require('dotenv/config')
 
 app.use(cors());
 
 
 // middleWare
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(morgan('tiny'));
-app.use('authjwt')
+app.use(authJwt());
+// app.use('/public/uploads', express.static(__dirname + '/public/uploads'));
+app.use(errorHandler);
+
 
 // Routes 
 const categoriesRoutes = require('./routes/categories.js')
